@@ -1,0 +1,17 @@
+Separate collection that keeps track of all the active user logins 
+(per device or browser), each session tores information
+about the user, device, IP, and refresh token
+
+
+why we have it 
+1- token rotaion to safly eplace refresh tokens
+2- logout per device to make every user can log out on one device withot effecting the other 
+3- device traking to know which device is logged information
+3- security to track ip and user agent for suspicious activity
+
+key field
+1- user id 
+2- ip 
+3- hashed refresh token
+4- user agent
+5- expires at 
