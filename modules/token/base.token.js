@@ -8,24 +8,18 @@ class baseToken{
         this.expiresIn = expiresIn;
     }
 
-    sign(_id , username , email , role){
-        const payload ={
-            _id,
-            username,
-            email,
-            role,
-        }
-        return jwt.sign(payload , this.#secret , {ewpiresIn: this.expiresIn})
+    secret(){
+        return this.#secret;
     }
-    verify(token){
-        try{
-            return jwt.verify(token , this.#secret)
-        }catch(err){
-            return null;
-        }
+
+    sign(){
+
     }
-    hasRole(payload , role ){
-        return payload.role === role;
+    verify(){
+ 
+    }
+    hasRole( roleFromTheDataBase , role ){
+        return roleFromTheDataBase === role;
     }
 }
 module.exports = baseToken;

@@ -8,7 +8,11 @@ const sessionSchema = new mongoose.Schema({
         ref: "User" ,
         required: true,
     },
-    refreshTokenHash:{
+    tokenSelector:{
+        type: String,
+        required: true,
+    },
+    hashedTokenValidator:{
         type: String,
         required: true,
     },
