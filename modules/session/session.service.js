@@ -11,7 +11,7 @@ const constants = require('../../config/constants.js');
 // Creating a new session
 // used for log in 
 // used for refreshes a token 
-const Create_new_Session = async (userInfo, tokenSelector, hashedTokenValidator, userAgent, ip) => {
+exports.Create_new_Session = async (userInfo, tokenSelector, hashedTokenValidator, userAgent, ip) => {
 
     try {
     
@@ -34,7 +34,10 @@ const Create_new_Session = async (userInfo, tokenSelector, hashedTokenValidator,
         console.error('Error creating session:', error);
         throw error;// throw and error so the controller can handel it 
     }
+    
+    //it returns the created session object or errors if any
 }
+
 
 
 

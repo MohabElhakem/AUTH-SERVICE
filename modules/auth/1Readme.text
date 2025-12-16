@@ -1,0 +1,25 @@
+The auth file is to handell all the end points 
+
+1- auth.routes :
+                for the decleration of the project routes
+                just the CRUD method the middleware and the controller
+                JUST THE routes
+
+2-  auth.controller:
+                Handell the HTTP requests and responses
+                Read the req body 
+                call of the mehtods 
+                Send th HTTP responses 
+                and Handel the status code
+                in a nutshell thats the flow of the route 
+
+3_auth.services: 
+                Handell the Basic tasks like the login flow not the
+                route flow,
+                token cordination
+                this is the Brain
+
+            
+4-auth.validators:
+                joi validation roles
+                and any validation roles in the project should be Here
