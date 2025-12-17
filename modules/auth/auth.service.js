@@ -12,21 +12,32 @@ exports.Sign_To_the_database = async (username,email, password) => {
     // nothing to do with the req and res
     // normall object
 
-    if(!email) throw new Error("Email is required");
-    if(!password) throw new Error("Password is required");
-    if(!username) throw new Error("Username is required");
-
-    const hashPassword = await bcrypt.hash(password, 10);
-    const user = await userDB.create({
-        email,
-        password: hashPassword,
-        username,
-    })
-    return {
-        userId: user._id,
-        email: user.email,
-        username: user.username,
-        role: user.role,
-    };
+    try {
+        if(!email) throw new Error("Email is required");
+        if(!password) throw new Error("Password is required");
+        if(!username) throw new Error("Username is required");
+    
+        const hashPassword = await bcrypt.hash(password, 10);
+        const user = await userDB.create({
+            email,
+            password: hashPassword,
+            username,
+        })
+        return {
+            userId: user._id,
+            email: user.email,
+            username: user.username,
+            role: user.role,
+        };
+    } catch (error) {
+        // handell if the email is duplicate
+        if (error.code === 11000) {
+            throw new Error("Email already in use");
+        }
+        // handell other errors
+        else throw new Error(error.message);
+    }
+    // it returns and object of the user without the password
 }
 
+// future step Make a glopel search function in the data base

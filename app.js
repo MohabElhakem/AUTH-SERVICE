@@ -10,5 +10,7 @@ app.get('/', (req, res) => {
 })
 
 // Start Adding all of you routes under Here ▼
+app.use('/auth', require('./modules/auth/auth.route.js'))
+// Start Adding all of you routes above Here ▲
 
-module.exports = app
+module.exports = app ;

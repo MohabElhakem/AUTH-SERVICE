@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 const { type } = require('os');
-const constants = require('../,../conifig/constants.js');
+const constants = require('../../config/constants.js');
 
 const userSchema = new mongoose.Schema({
     email:{

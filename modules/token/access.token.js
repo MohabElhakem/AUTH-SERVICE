@@ -1,6 +1,7 @@
-const baseToken = require('./base.token');
+const baseToken = require('./base.token.js');
 const constants = require('../../config/constants.js');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 class accessToken extends baseToken{
     constructor(){

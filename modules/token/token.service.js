@@ -15,7 +15,7 @@ exports.validate_refresh_token = async (token, hashedSecretDB) => {
     // this function returns true if valid, false otherwise chick the console for more details
 }
 
-exports.create_access_token = (_id , username , email , role) => {
+exports.create_access_token = (_id , username , email , role= "user") => {
     const access_token_instance = new accessToken();
     return access_token_instance.sign(_id , username , email , role);
     // this function returns the signed access token JWT 

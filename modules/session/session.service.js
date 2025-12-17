@@ -11,18 +11,18 @@ const constants = require('../../config/constants.js');
 // Creating a new session
 // used for log in 
 // used for refreshes a token 
-exports.Create_new_Session = async (userInfo, tokenSelector, hashedTokenValidator, userAgent, ip) => {
+exports.Create_new_Session = async (userID, tokenSelector, hashedTokenValidator, userAgent, ip) => {
 
     try {
     
         const Session = new sessionModel({
     
-            userID: userInfo._id,
+            userID,
             tokenSelector: tokenSelector,
             hashedTokenValidator: hashedTokenValidator,
             userAgent : userAgent || 'Unknown',
             ip: ip || 'Unknown',
-            expiresAt: new Date(Date.now() + constants.refreshTokenExpirationInSessions), // 7 days from now
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     
         });
          const savedSession = await Session.save();
@@ -38,18 +38,3 @@ exports.Create_new_Session = async (userInfo, tokenSelector, hashedTokenValidato
     //it returns the created session object or errors if any
 }
 
-
-
-
-
-
-
-
-
-
-
-
-module.exports = {
-    Create_new_Session,
-    Validate_Rotate_Session
-};
