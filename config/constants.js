@@ -2,6 +2,8 @@
 
 const { access } = require("fs");
 const refreshToken = require("../modules/token/refresh.token");
+const User = require("../modules/user/user.model");
+const Session = require("../modules/session/session.model");
 
 // Token expiration time , cookie name , user roles , rate limit values etc.
 userRoles = ['user','admin','superadmin'];
