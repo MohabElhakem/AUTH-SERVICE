@@ -2,7 +2,6 @@
 // LIKE STORING REFRESH TOKENS IN DB , INVALIDATING TOKENS , ROTATING TOKENS ETC.
 const accessToken = require('./access.token');
 const refreshToken = require('./refresh.token');
-
 exports.create_refresh_token = async () => {
     const refresh_token_instance = new refreshToken();
     return refresh_token_instance.sign();
@@ -21,3 +20,20 @@ exports.create_access_token = (_id , username , email , role= "user") => {
     // this function returns the signed access token JWT 
 }
 
+exports.rotate_refresh_token =async (token) => {
+    const refresh_token_instance= new refreshToken();
+    return await refresh_token_instance.rotate(token) ;
+    // this function output is object with token , selector and hasedSecret
+}
+
+exports.validate_access_token = (token) => {
+    const access_token_instance = new accessToken();
+    return access_token_instance.verify(token);
+    // this funtion return an object with valid , safe and decode or reason
+}
+
+exports.validate_the_role = (roleFromTheToken , role) => {
+    const access_token_instance = new accessToken();
+    return access_token_instance.hasRole(roleFromTheToken , role) 
+    // this function return true or false 
+}

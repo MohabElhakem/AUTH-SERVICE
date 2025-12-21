@@ -57,6 +57,10 @@ class refreshToken extends baseToken{
 
     }
 
+    hasRole(){
+        return undefined;
+    }
+
 }
 module.exports = refreshToken;
 

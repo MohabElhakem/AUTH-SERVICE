@@ -33,7 +33,7 @@ class accessToken extends baseToken{
                 return {valid: false , safe: true , reason: 'not active yet'}
             }
             else {
-                return {valid: false , safe: true , reason: 'unknown error'}
+                return {valid: false , safe: true , reason: err.message }
             }
         }
     }

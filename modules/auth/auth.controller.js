@@ -2,6 +2,7 @@ const authService = require('./auth.service');
 const tokenService = require("../token/token.service");
 const sessionService = require("../session/session.service");
 const helpers = require("../../helpers/helpers.js");
+const accessToken = require('../token/access.token.js');
 require('dotenv').config();
 
 // the sign up controller
@@ -56,7 +57,7 @@ const sign = async (req, res) => {
         })
     } catch (error) {
         console.error("Error in sign up controller:", error);
-        return res.status(500).json({
+        return res.status(401).json({
             message: "Internal Server Error",
             error: error.message,
         })
@@ -123,7 +124,7 @@ const login = async (req, res) => {
          })
     } catch (error) {
         console.error("Error in login controller:", error);
-        return res.status(500).json({
+        return res.status(401).json({
             message: "Internal Server Error",
             error: error.message,
         })
@@ -132,16 +133,24 @@ const login = async (req, res) => {
 }
 
 const logout = async (req ,res) => {
-    // first end the session
-    const EndSession = await sessionService.End_Session(req.refreshToken.selector);
-    EndSession ? console.log('session found and deleted') : console.log("session already out");
-    // then clear the cookie
-    authService.clear_cookie(res)
-    //Then force logout 
-    return res.status(200).json({
-        forcelogout: true,
-        message: "loged out successfully"
-    })
+    try {
+        // first end the session
+        const EndSession = await sessionService.End_Session(req.refreshToken.selector);
+        EndSession ? console.log('session found and deleted') : console.log("session already out");
+        // then clear the cookie
+        authService.clear_cookie(res)
+        //Then force logout 
+        return res.status(200).json({
+            forcelogout: true,
+            message: "loged out successfully"
+        })
+    } catch (error) {
+        console.log("error log out controller", error);
+        return res.status(401).json({
+            message: "error while logging out",
+            error: error.message
+        })
+    }
 
 }
 
@@ -159,7 +168,7 @@ const logoutAll = async (req, res) => {
             req.refreshToken.selector);
 
         if (searchSession.found === false || !searchSession.data ){
-            return res.status(400).json({
+            return res.status(401).json({
                 message: "this session is not in the database",
                 action:"go tho the speacial route where you will provide the email and password for this action"
             })
@@ -184,12 +193,80 @@ const logoutAll = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        return res.status(500).json({
+        return res.status(401).json({
             error: error.message
         })
     }
 }
 
+const refreshToken = async (req,res) => {
+
+    try {
+        console.log("the start of the refresh route")
+        // take the token from the middleware alredy splited
+        // 1-search for the session in the DB
+        const session = await helpers.Search_By("session","tokenSelector",req.refreshToken.selector);
+        // Handle the out come of the session not there
+        if (!session.found || !session.data) {
+            console.log("session is not found or corapted data so log in again");
+            throw new Error("this session doesn't match!!!");
+        };
+        // 2-verify the token
+        const isValied = await tokenService.validate_refresh_token(
+            req.refreshToken.token, 
+            session.data.hashedTokenValidator
+        );
+        if(!isValied) {
+            await sessionService.End_all_sessions(session.data.userID);
+            console.log("error validating the token all sessions revoked");
+            throw new Error("this token does't match!!!!!. please log in again");
+            
+        }
+        // 3-give him acces token
+        // get the important data to make the token
+        const userDB = await helpers.Search_By('user','_id',session.data.userID);
+        if (!userDB.found || !userDB.data){
+            console.log("could't find the user");
+            throw new Error("corapted data couldn't find the user");
+        }
+        const A_Token = tokenService.create_access_token(
+            userDB.data._id,
+            userDB.data.username,
+            userDB.data.email,
+            userDB.data.role
+        )
+        // 4- rotate the old one 
+        const rotated = await tokenService.rotate_refresh_token(req.refreshToken.token);
+    
+        // 5- update the session
+        await sessionService.update_rotated_token_in_session(
+            session.data.tokenSelector,
+            rotated.hashedSecret
+        )
+    
+        // 6- save it to the cookie
+        res.cookie('refreshToken', rotated.token, {
+        httpOnly: true,
+        sameSite: 'Lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/auth/internal',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        })
+    
+        return res.status(200).json({
+            message: "here is the new Acces token",
+            token : A_Token,
+            userID: userDB.data._id,
+        })
+    } catch (error) {
+        console.log("Error while refreshin the token",error)
+        return res.status(401).json({
+            message: "Error while refreshin the token",
+            error : error.message
+        })
+    }
+
+}
 
 
 module.exports = {
@@ -197,4 +274,5 @@ module.exports = {
     login,
     logout,
     logoutAll,
+    refreshToken,
 }

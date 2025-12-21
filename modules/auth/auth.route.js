@@ -18,5 +18,11 @@ router.post(
     middleware.extractCookie,
     authController.logoutAll
 )
+//refresh route
+router.get(
+    '/internal/refreshToken',
+    middleware.extractCookie,
+    authController.refreshToken
+)
 
 module.exports = router; 

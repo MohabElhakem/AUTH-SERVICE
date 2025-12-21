@@ -63,6 +63,20 @@ exports.extract_the_user_password_from_the_session = async (session_data) => {
         return user.password
     } catch (error) {
         console.log("problem getting the password",error.message);
-        return error;
+        throw new Error("problem extracting the password");
+    }
+}
+
+exports.update_rotated_token_in_session = async (session_selector , newHashedValidator) => {
+    try {
+        await sessionModel.updateOne(
+            {tokenSelector: session_selector},
+            {
+                $set: {hashedTokenValidator: newHashedValidator}
+            }
+        )
+    } catch (error) {
+        console.log('error updating rotated token', error);
+        throw new Error("error updating rotated the token ")
     }
 }

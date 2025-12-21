@@ -18,8 +18,8 @@ class baseToken{
     verify(){
  
     }
-    hasRole( roleFromTheDataBase , role ){
-        return roleFromTheDataBase === role;
+    hasRole( roleFromTheToken , role ){
+        return roleFromTheToken === role;
     }
 }
 module.exports = baseToken;

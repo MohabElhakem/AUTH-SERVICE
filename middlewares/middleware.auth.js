@@ -59,6 +59,7 @@ exports.extractCookie = (req, res, next) => {
     req.refreshToken ={
         selector: parts[0],
         validator: parts[1],
+        token: refreshToken,
     }
     return next();
     // a middleware to extract refresh token information
