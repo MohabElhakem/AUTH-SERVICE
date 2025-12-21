@@ -44,3 +44,25 @@ exports.End_Session = async (session_selector) => {
     return !session ? false : true ;
     // this function only delete the dession and end it 
 }
+
+exports.End_all_sessions = async (user_id) => {
+    try {
+        const sessions =  await sessionModel.deleteMany({userID: user_id});
+        return true 
+    } catch (error) {
+        console.log('error ending the sessions', error);
+        throw new Error('failed to delete sessions')
+    }
+}
+
+exports.extract_the_user_password_from_the_session = async (session_data) => {
+    try {
+        const U_id = session_data.userID;
+        const user = await userModel.findOne({_id : U_id});
+        if(!user) throw new Error ("no user found in the DB");
+        return user.password
+    } catch (error) {
+        console.log("problem getting the password",error.message);
+        return error;
+    }
+}

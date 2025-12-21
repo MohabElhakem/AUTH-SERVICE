@@ -13,3 +13,7 @@ exports.login = joi.object({
     email:joi.string().email().required(),
     password: joi.string().min(6).required()
 })
+
+exports.logoutall = joi.object({
+    password: joi.string().min(6).required()
+})

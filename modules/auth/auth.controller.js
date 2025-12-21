@@ -145,8 +145,56 @@ const logout = async (req ,res) => {
 
 }
 
+const logoutAll = async (req, res) => {
+
+    try {
+        const {password} = req.body;
+        if(!password) throw new Error("the password is nedded")
+        
+        //the selector in the cookie dont forget
+        // first get the session from the selector
+        const searchSession = await helpers.Search_By(
+            'session',
+            'tokenSelector',
+            req.refreshToken.selector);
+
+        if (searchSession.found === false || !searchSession.data ){
+            return res.status(400).json({
+                message: "this session is not in the database",
+                action:"go tho the speacial route where you will provide the email and password for this action"
+            })
+        }
+        // 2_ i have the session get the password to vaidate
+        const HashedPassword = await sessionService.extract_the_user_password_from_the_session(searchSession.data);
+        // 3= validate the passwprd
+        const secure = await helpers.Validate_Password(password,HashedPassword);
+        if (!secure) throw new Error ("Wrong password!!!")
+        // the right password delte all sessions with that user id 
+    
+        await sessionService.End_all_sessions(searchSession.data.userID);
+    
+        // clear the cookie
+        authService.clear_cookie(res);
+
+        console.log('user have been loged out from all devices no session are active');
+
+        return res.status(201).json({
+            message: "user have been loged out from every device "
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            error: error.message
+        })
+    }
+}
+
+
+
 module.exports = {
     sign,
     login,
     logout,
+    logoutAll,
 }
