@@ -8,6 +8,8 @@ const { signUp,login } = require('../../validators/validators.auth');
 // EXAMPLE
 //router.post('/login', authController.login);
 router.post('/signUp', middleware.validate(signUp), authController.sign);
-router.post('/login',middleware.validate(login),authController.login)
+router.post('/login',middleware.validate(login),authController.login);
+//you will add the middleware for the acces token to logout if needed ▼
+router.get('/internal/logout',middleware.extractCookie,authController.logout)
 
 module.exports = router; 

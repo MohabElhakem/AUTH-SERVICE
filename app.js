@@ -1,8 +1,10 @@
 const express = require ('express')
 const app = express()
+const cookieParser= require('cookie-parser')
 
 //Middlewares
-app.use(express.json())
+app.use(express.json());
+app.use(cookieParser());
 
 //Routes
 app.get('/', (req, res) => {

@@ -38,3 +38,9 @@ exports.Create_new_Session = async (userID, tokenSelector, hashedTokenValidator,
     //it returns the created session object or errors if any
 }
 
+exports.End_Session = async (session_selector) => {
+
+    const session = await sessionModel.findOneAndDelete({ tokenSelector: session_selector });
+    return !session ? false : true ;
+    // this function only delete the dession and end it 
+}

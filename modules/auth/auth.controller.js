@@ -42,7 +42,7 @@ const sign = async (req, res) => {
             httpOnly: true,
             sameSite: 'Lax',
             secure: process.env.NODE_ENV === 'production',
-            path: '/auth/refresh',
+            path: '/auth/internal',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     
         })
@@ -107,7 +107,7 @@ const login = async (req, res) => {
             httpOnly: true,
             sameSite: 'Lax',
             secure: process.env.NODE_ENV === 'production',
-            path: '/auth/refresh',
+            path: '/auth/internal',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
          })
     
@@ -131,7 +131,22 @@ const login = async (req, res) => {
 
 }
 
+const logout = async (req ,res) => {
+    // first end the session
+    const EndSession = await sessionService.End_Session(req.refreshToken.selector);
+    EndSession ? console.log('session found and deleted') : console.log("session already out");
+    // then clear the cookie
+    authService.clear_cookie(res)
+    //Then force logout 
+    return res.status(200).json({
+        forcelogout: true,
+        message: "loged out successfully"
+    })
+
+}
+
 module.exports = {
     sign,
     login,
+    logout,
 }

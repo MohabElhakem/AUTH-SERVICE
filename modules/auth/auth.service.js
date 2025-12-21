@@ -1,7 +1,4 @@
 const userDB = require("../user/user.model");
-const sessionDB = require("../session/session.model");
-const constants = require("../../config/constants");
-const tokenService = require("../token/token.service");
 const bcrypt = require("bcrypt");
 
 
@@ -41,3 +38,14 @@ exports.Sign_To_the_database = async (username,email, password) => {
 }
 
 
+exports.clear_cookie = (res) => {
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        sameSite: 'Lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/auth/internal',
+    });
+    console.log("Refresh token cleared");
+    // it clear the token from the cookies
+}
